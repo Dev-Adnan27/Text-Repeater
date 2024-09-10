@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Repeater</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      #alert {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        background-color: #38b2ac;
+        color: white;
+        border-radius: 5px;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.5s;
+      }
+      #result, #copyButton {
+        display: none;
+      }
+    </style>
+  </head>
+  <body class="bg-teal-50 min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <h1 class="text-2xl font-bold text-teal-600 mb-6 text-center">Text Repeater</h1>
+      <form class="space-y-4">
+        <div>
+          <input
+            type="text"
+            name="text"
+            placeholder="Enter your text"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-teal-400"
+          />
+        </div>
+        <div>
+          <input
+            type="number"
+            name="qty"
+            placeholder="Number of repetitions"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-teal-400"
+          />
+        </div>
+        <div class="space-x-4">
+          <label class="inline-flex items-center">
+            <input
+              type="radio"
+              name="separator"
+              value="space"
+              class="text-teal-600 focus:ring-teal-500"
+              checked
+            />
+            <span class="ml-2">Space</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input
+              type="radio"
+              name="separator"
+              value="newline"
+              class="text-teal-600 focus:ring-teal-500"
+            />
+            <span class="ml-2">New Line</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input
+              type="radio"
+              name="separator"
+              value="period"
+              class="text-teal-600 focus:ring-teal-500"
+            />
+            <span class="ml-2">Period</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input
+              type="radio"
+              name="separator"
+              value="csv"
+              class="text-teal-600 focus:ring-teal-500"
+            />
+            <span class="ml-2">CSV</span>
+          </label>
+        </div>
+        <div>
+          <input
+            type="button"
+            value="Repeat"
+            id="getRepeat"
+            class="w-full bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-600 cursor-pointer"
+          />
+        </div>
+      </form>
+
+      <div
+        id="result"
+        class="mt-6 p-4 bg-teal-100 rounded-lg font-mono text-teal-700 whitespace-pre-wrap break-words"
+      ></div>
+      <button
+        id="copyButton"
+        class="w-full mt-4 bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-600 cursor-pointer">
+        Copy Result
+      </button>
+      <div id="alert">Copied to clipboard!</div>
+    </div>
+
+    <script>
+      document.getElementById('getRepeat').addEventListener('click', function() {
+        let text = document.querySelector('input[name="text"]').value;
+        let qty = parseInt(document.querySelector('input[name="qty"]').value);
+        let separator = document.querySelector('input[name="separator"]:checked').value;
+        let resultDiv = document.getElementById('result');
+        let copyButton = document.getElementById('copyButton');
+        resultDiv.innerHTML = '';
+
+        // Show the result div and copy button
+        resultDiv.style.display = 'block';
+        copyButton.style.display = 'block';
+
+        // Set correct separator value
+        let separatorText;
+        if (separator === 'space') {
+          separatorText = ' ';
+        } else if (separator === 'newline') {
+          separatorText = '\n';
+        } else if (separator === 'period') {
+          separatorText = '.';
+        } else if (separator === 'csv') {
+          separatorText = ',';
+        }
+
+        for (let i = 0; i < qty; i++) {
+          resultDiv.innerHTML += text;
+
+          // If not the last iteration, append the separator
+          if (i < qty - 1) {
+            if (separatorText === ' ') {
+              resultDiv.innerHTML += '&nbsp;';
+            } else if (separatorText === '.') {
+              resultDiv.innerHTML += '.';
+            } else if (separatorText === ',') {
+              resultDiv.innerHTML += ',';
+            } else {
+              resultDiv.innerHTML += '<br>';
+            }
+          }
+        }
+      });
+
+      document.getElementById('copyButton').addEventListener('click', function() {
+        let resultText = document.getElementById('result').textContent;
+        navigator.clipboard.writeText(resultText).then(function() {
+          let alertBox = document.getElementById('alert');
+          alertBox.style.display = 'block';
+          alertBox.style.opacity = 1;
+          setTimeout(function() {
+            alertBox.style.opacity = 0;
+            setTimeout(function() {
+              alertBox.style.display = 'none';
+            }, 500);
+          }, 1000);
+        }, function(err) {
+          alert('Failed to copy: ', err);
+        });
+      });
+    </script>
+  </body>
+</html>
